@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEET 2026 PCB Master Tracker</title>
+
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+background:linear-gradient(-45deg,#c7d2fe,#a5f3fc,#fbcfe8,#fde68a);
+background-size:300% 300%;
+animation:bg 18s ease infinite;
+padding-bottom:80px;
+transition:.3s;
+}
+body.dark{
+background:#020617;
+color:#e5e7eb;
+animation:none;
+}
+@keyframes bg{
+0%{background-position:0% 50%}
+50%{background-position:100% 50%}
+100%{background-position:0% 50%}
+}
+
+.app{max-width:520px;margin:auto;padding:16px}
+
+/* HEADER */
+.card{
+background:rgba(255,255,255,.8);
+backdrop-filter:blur(14px);
+border-radius:26px;
+padding:22px;
+box-shadow:0 10px 30px rgba(0,0,0,.1);
+margin-bottom:16px;
+}
+body.dark .card{
+background:#020617;
+border:1px solid #1e293b;
+}
+
+h1{margin:6px 0;font-size:28px;font-weight:900}
+.small{font-size:12px;font-weight:700;opacity:.6}
+
+/* TOP BAR */
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+}
+.icon-btn{
+font-size:22px;
+font-weight:900;
+background:none;
+border:none;
+color:inherit;
+}
+
+/* TABS */
+.tabs{
+display:flex;
+gap:6px;
+background:rgba(255,255,255,.6);
+padding:6px;
+border-radius:20px;
+margin-bottom:14px;
+}
+body.dark .tabs{background:#020617}
+.tab{
+flex:1;
+padding:14px;
+border-radius:16px;
+font-weight:900;
+font-size:15px;
+border:none;
+background:none;
+color:#475569;
+}
+body.dark .tab{color:#94a3b8}
+.tab.active{
+background:#fff;
+color:#6d28d9;
+box-shadow:0 4px 12px rgba(0,0,0,.1);
+}
+body.dark .tab.active{
+background:#1e293b;
+color:#a78bfa;
+}
+
+/* PROGRESS */
+.progress-wrap{margin-top:14px}
+.progress-top{
+display:flex;
+justify-content:space-between;
+font-size:13px;
+font-weight:800;
+margin-bottom:6px;
+}
+.track{
+height:10px;
+background:rgba(0,0,0,.1);
+border-radius:20px;
+overflow:hidden;
+}
+body.dark .track{background:#1e293b}
+.fill{height:100%;width:0%;transition:.4s}
+.phy{background:linear-gradient(90deg,#22c55e,#4ade80)}
+.che{background:linear-gradient(90deg,#f97316,#fb923c)}
+.bio{background:linear-gradient(90deg,#ec4899,#f472b6)}
+
+/* LIST */
+.item{
+display:flex;
+gap:16px;
+padding:18px;
+border-radius:22px;
+background:rgba(255,255,255,.65);
+margin-bottom:12px;
+font-size:17px;
+font-weight:700;
+}
+body.dark .item{background:#020617;border:1px solid #1e293b}
+.item.checked{background:#ecfdf5}
+body.dark .item.checked{background:#022c22}
+.checkbox{
+width:26px;height:26px;
+border-radius:50%;
+border:3px solid #cbd5e1;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+.item.checked .checkbox{
+background:#10b981;
+border-color:#10b981;
+color:#fff;
+}
+
+/* MENU */
+.menu{
+position:fixed;
+top:0;right:-100%;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.4);
+transition:.3s;
+z-index:9999;
+}
+.menu.open{right:0}
+.menu-box{
+position:absolute;
+top:0;right:0;
+width:85%;
+height:100%;
+background:#fff;
+padding:20px;
+overflow-y:auto;
+}
+body.dark .menu-box{background:#020617}
+
+/* MENU TABS */
+.menu-tabs{
+display:flex;
+gap:10px;
+margin-bottom:16px;
+}
+.menu-tab{
+flex:1;
+padding:12px;
+border-radius:14px;
+font-weight:900;
+border:none;
+}
+.menu-tab.active{background:#6366f1;color:#fff}
+
+/* PLAN */
+.plan{
+display:flex;
+gap:14px;
+padding:14px;
+border-radius:18px;
+background:#f8fafc;
+margin-bottom:12px;
+}
+body.dark .plan{background:#020617;border:1px solid #1e293b}
+.plan.checked{background:#ecfdf5}
+.plan .box{
+width:26px;height:26px;
+border-radius:50%;
+border:3px solid #c7d2fe;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+.plan.checked .box{
+background:#10b981;
+border-color:#10b981;
+color:#fff;
+}
+.plan-date{font-size:12px;opacity:.6}
+.plan-text{font-size:15px;font-weight:800}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<div class="topbar">
+<button class="icon-btn" onclick="toggleDark()">🌙</button>
+<button class="icon-btn" onclick="toggleMenu()">☰</button>
+</div>
+
+<div class="card">
+<div class="small">NEET 2026</div>
+<h1 id="title">Physics Progress</h1>
+
+<div class="progress-wrap">
+<div class="progress-top">
+<span id="percent">0%</span>
+<span id="count">0/0</span>
+</div>
+<div class="track">
+<div id="bar" class="fill phy"></div>
+</div>
+</div>
+</div>
+
+<div class="tabs">
+<button class="tab active" onclick="switchTab('phy',this)">Physics</button>
+<button class="tab" onclick="switchTab('che',this)">Chemistry</button>
+<button class="tab" onclick="switchTab('bio',this)">Biology</button>
+</div>
+
+<div id="list"></div>
+</div>
+
+<!-- MENU -->
+<div class="menu" id="menu">
+<div class="menu-box">
+
+<div class="menu-tabs">
+<button class="menu-tab active" onclick="menuTab('plan',this)">📅 Plan</button>
+<button class="menu-tab" onclick="menuTab('progress',this)">📊 Progress</button>
+</div>
+
+<div id="menuContent"></div>
+
+</div>
+</div>
+
+<script>
+/* DARK MODE */
+function toggleDark(){
+document.body.classList.toggle("dark");
+localStorage.setItem("dark",document.body.classList.contains("dark"));
+}
+if(localStorage.getItem("dark")==="true")document.body.classList.add("dark");
+
+/* MAIN DATA */
+const DB={
+phy:["Units and Measurements","Motion in a Straight Line","Motion in a Plane","Laws of Motion","Work, Energy and Power","Centre of Mass and Rotational Motion","Gravitation","Thermodynamics","Current Electricity","Magnetic Effects of Current and Magnetism","Electromagnetic Induction","Alternating Current","Dual Nature of Radiation and Matter","Atoms","Nuclei","Semiconductor Electronics"],
+che:["Some Basic Concepts of Chemistry","Structure of Atom","Classification of Elements and Periodicity in Properties","Chemical Bonding and Molecular Structure","Chemical Thermodynamics","Equilibrium","Redox Reactions","Electrochemistry","Chemical Kinetics","Coordination Compounds","Amines","Biomolecules"],
+bio:["The Living World","Biological Classification","Cell: The Unit of Life","Biomolecules","Photosynthesis in Higher Plants","Respiration in Plants","Digestion and Absorption","Breathing and Exchange of Gases","Body Fluids and Circulation","Excretory Products and Their Elimination","Locomotion and Movement","Neural Control and Coordination","Human Reproduction","Evolution","Ecology and Environment"]
+};
+
+let active="phy";
+let done=JSON.parse(localStorage.getItem("neet_main"))||{};
+
+function render(){
+const box=document.getElementById("list");
+box.innerHTML="";
+DB[active].forEach(ch=>{
+const k=active+ch;
+const d=document.createElement("div");
+d.className="item"+(done[k]?" checked":"");
+d.onclick=()=>{done[k]=!done[k];save();render();}
+d.innerHTML=`<div class="checkbox">${done[k]?"✔":""}</div><div>${ch}</div>`;
+box.appendChild(d);
+});
+updateBar();
+}
+function updateBar(){
+const t=DB[active].length;
+let c=0;DB[active].forEach(ch=>done[active+ch]&&c++);
+bar.style.width=(c/t*100)+"%";
+bar.className="fill "+active;
+percent.innerText=Math.round(c/t*100)+"%";
+count.innerText=c+"/"+t;
+title.innerText=(active==="phy"?"Physics":active==="che"?"Chemistry":"Biology")+" Progress";
+}
+function switchTab(t,b){
+active=t;
+document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+b.classList.add("active");
+render();
+}
+function save(){localStorage.setItem("neet_main",JSON.stringify(done));}
+
+/* MENU */
+function toggleMenu(){menu.classList.toggle("open");menuTab('plan')}
+function menuTab(type,btn){
+document.querySelectorAll(".menu-tab").forEach(x=>x.classList.remove("active"));
+btn&&btn.classList.add("active");
+menuContent.innerHTML=type==="plan"?renderPlan():renderOverall();
+}
+
+/* PLAN */
+const planDone=JSON.parse(localStorage.getItem("neet_plan"))||{};
+function renderPlan(){
+let s="";
+let seq=[];
+let p=0,c=0,b=0;
+while(p<DB.phy.length||c<DB.che.length||b<DB.bio.length){
+if(p<DB.phy.length)seq.push({s:"Physics",c:DB.phy[p++]});
+if(c<DB.che.length)seq.push({s:"Chemistry",c:DB.che[c++]});
+if(b<DB.bio.length)seq.push({s:"Biology",c:DB.bio[b++]});
+}
+const start=new Date();
+seq.forEach((i,n)=>{
+const d=new Date(start);d.setDate(d.getDate()+n);
+const k="d"+n;
+s+=`<div class="plan ${planDone[k]?"checked":""}" onclick="planDone['${k}']=!planDone['${k}'];localStorage.setItem('neet_plan',JSON.stringify(planDone));menuTab('plan')">
+<div class="box">${planDone[k]?"✔":""}</div>
+<div><div class="plan-date">${d.toDateString()} • ${i.s}</div>
+<div class="plan-text">${i.c}</div></div></div>`;
+});
+return s;
+}
+
+/* OVERALL PROGRESS */
+function renderOverall(){
+let total=0,doneC=0;
+Object.keys(DB).forEach(s=>DB[s].forEach(ch=>{total++;if(done[s+ch])doneC++;}));
+return `
+<h3>Overall PCB Progress</h3>
+<div class="track"><div class="fill phy" style="width:${doneC/total*100}%"></div></div>
+<p><b>${Math.round(doneC/total*100)}%</b> (${doneC}/${total})</p>
+`;
+}
+
+render();
+</script>
+</body>
+</html>
