@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>NEET 2026 Tracker</title>
+    
+    <style>
+        /* --- 1. EXACT STYLES FROM YOUR FILE --- */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        button { font-family: inherit; color: inherit; cursor: pointer; } 
+
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --bg-grad-1: #c4b5fd; --bg-grad-2: #a5f3fc; --bg-grad-3: #fda4af;
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --card-bg: #ffffff;
+            --success: #10b981;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            margin: 0; padding: 0;
+            color: var(--text-main);
+            background: linear-gradient(-45deg, var(--bg-grad-1), var(--bg-grad-2), var(--bg-grad-1), var(--bg-grad-3));
+            background-size: 300% 300%;
+            animation: gradientBG 20s ease infinite;
+            min-height: 100vh;
+            padding-bottom: 20px;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Layout */
+        .app-container { max-width: 480px; margin: 0 auto; min-height: 100vh; padding: 24px; display: flex; flex-direction: column; gap: 24px; }
+        .flex-row { display: flex; align-items: center; }
+        .justify-between { justify-content: space-between; }
+        
+        /* Glass Components */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+        }
+
+        /* Tab Switcher */
+        .tab-container {
+            display: flex;
+            background: rgba(255,255,255,0.4);
+            padding: 6px;
+            border-radius: 20px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            font-weight: 800;
+            color: var(--text-muted);
+            border-radius: 16px;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+        .tab-btn.active {
+            background: var(--card-bg);
+            color: var(--primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        /* List Items */
+        .list-item {
+            padding: 16px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            background: rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+        }
+        
+        .list-item.checked {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            transition: 0.3s;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        .list-item.checked .checkbox {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .chapter-title {
+            font-weight: 600;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        .list-item.checked .chapter-title {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        /* Header */
+        h1 { margin: 0; font-size: 28px; font-weight: 900; color: var(--text-main); line-height: 1.2; }
+        .subtitle { font-size: 12px; font-weight: 700; text-transform: uppercase; opacity: 0.6; letter-spacing: 1px; }
+
+        /* Progress Bar */
+        .progress-track { background: rgba(0,0,0,0.05); height: 10px; border-radius: 10px; overflow: hidden; margin-top: 16px; }
+        .progress-fill { height: 100%; border-radius: 10px; transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); background: linear-gradient(90deg, #a855f7, #3b82f6); }
+
+        /* Animation Particles */
+        .animate-particle { position: fixed; width: 6px; height: 6px; border-radius: 50%; pointer-events: none; z-index: 9999; animation: particle 0.7s cubic-bezier(0, .9, .57, 1) forwards; }
+        @keyframes particle { 
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1.5); } 
+            100% { opacity: 0; transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(0); } 
+        }
+
+        /* Icon Helper */
+        .icon { width: 16px; height: 16px; stroke: currentColor; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div class="glass" style="padding: 24px;">
+            <div class="subtitle">NEET 2026 Target</div>
+            <h1>One Shot Tracker</h1>
+            
+            <div class="flex-row justify-between" style="margin-top: 20px; font-size: 12px; font-weight: bold;">
+                <span id="progress-text">0% Completed</span>
+                <span id="progress-fraction">0/0</span>
+            </div>
+            <div class="progress-track">
+                <div id="progress-bar" class="progress-fill" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="switchTab('phy')">Physics</button>
+            <button class="tab-btn" onclick="switchTab('che')">Chemistry</button>
+            <button class="tab-btn" onclick="switchTab('bio')">Biology</button>
+        </div>
+
+        <div id="content-area">
+            </div>
+
+        <div style="text-align: center; opacity: 0.5; font-size: 10px; font-weight: bold; margin-top: 20px;">
+            STAY FOCUSED • MAY 3RD 2026
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATA ---
+        const chapters = {
+            phy: [
+                "Units and Measurements", "Gravitation", "Mech. Properties of Solids", 
+                "Thermal Properties", "Thermodynamics", "Kinetic Theory", 
+                "Current Electricity", "Magnetism and Matter", "EM Waves", 
+                "Dual Nature of Radiation", "Atoms", "Nuclei", "Semiconductor Electronics"
+            ],
+            che: [
+                "Structure of Atom", "Periodic Table", "Chemical Bonding", 
+                "Redox Reactions", "Solutions", "Chemical Kinetics", 
+                "d and f Block Elements", "Coordination Compounds", "Amines", "Biomolecules"
+            ],
+            bio: [
+                "Cell: The Unit of Life", "Cell Cycle & Division", "Biomolecules (Bio)", 
+                "Morphology of Plants", "Anatomy of Plants", "Breathing & Exchange", 
+                "Body Fluids", "Excretory Products", "Locomotion", 
+                "Human Reproduction", "Reproductive Health", "Human Health & Disease", 
+                "Microbes in Welfare", "Biotech: Principles", "Biotech: Applications", 
+                "Organisms & Pop", "Ecosystem", "Biodiversity"
+            ]
+        };
+
+        const ICONS = {
+            check: '<polyline points="20 6 9 17 4 12"/>'
+        };
+
+        // --- STATE & UTILS ---
+        let activeTab = 'phy';
+        let checkedItems = {};
+
+        // Load safely
+        try {
+            checkedItems = JSON.parse(localStorage.getItem('neet_tracker_checked')) || {};
+        } catch (e) {
+            checkedItems = {};
+        }
+
+        // Haptics
+        function vibrate(ms) { if(navigator.vibrate) navigator.vibrate(ms); }
+        function vibrateHeavy() { vibrate(70); }
+
+        // Particle Animation (The Blast)
+        function triggerBlast(x, y) {
+            if (!x) x = window.innerWidth / 2;
+            if (!y) y = window.innerHeight / 2;
+            const colors = ['#6a11cb', '#2575fc', '#10b981', '#ffffff'];
+            
+            for(let i=0; i<20; i++) {
+                const p = document.createElement('div');
+                p.className = 'animate-particle';
+                p.style.left = x + 'px'; p.style.top = y + 'px';
+                p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+                const angle = Math.random()*360;
+                const speed = Math.random() * 150 + 60; 
+                p.style.setProperty('--tx', (Math.cos(angle)*speed)+'px');
+                p.style.setProperty('--ty', (Math.sin(angle)*speed)+'px');
+                document.body.appendChild(p);
+                setTimeout(()=>p.remove(), 700);
+            }
+        }
+
+        // --- RENDER FUNCTIONS ---
+        function render() {
+            const container = document.getElementById('content-area');
+            const list = chapters[activeTab];
+            
+            container.innerHTML = list.map((chapter) => {
+                const id = chapter; 
+                const isChecked = !!checkedItems[id];
+                
+                return `
+                <div class="list-item ${isChecked ? 'checked' : ''}" onclick="toggleCheck('${id}', event)">
+                    <div class="checkbox">
+                        ${isChecked ? `<svg class="icon" viewBox="0 0 24 24">${ICONS.check}</svg>` : ''}
+                    </div>
+                    <span class="chapter-title">${chapter}</span>
+                </div>
+                `;
+            }).join('');
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            // Calculate total progress across ALL subjects
+            let totalChapters = 0;
+            let completed = 0;
+
+            Object.values(chapters).forEach(subjectList => {
+                subjectList.forEach(ch => {
+                    totalChapters++;
+                    if(checkedItems[ch]) completed++;
+                });
+            });
+
+            const pct = Math.round((completed / totalChapters) * 100);
+            document.getElementById('progress-bar').style.width = `${pct}%`;
+            document.getElementById('progress-text').innerText = `${pct}% Completed`;
+            document.getElementById('progress-fraction').innerText = `${completed}/${totalChapters}`;
+        }
+
+        function switchTab(tab) {
+            activeTab = tab;
+            vibrate(30); // Light tap
+            
+            // Update Buttons
+            const btns = document.querySelectorAll('.tab-btn');
+            btns.forEach(b => b.classList.remove('active'));
+            
+            if(tab === 'phy') btns[0].classList.add('active');
+            if(tab === 'che') btns[1].classList.add('active');
+            if(tab === 'bio') btns[2].classList.add('active');
+
+            render();
+        }
+
+        function toggleCheck(id, event) {
+            // Toggle Logic
+            if (checkedItems[id]) {
+                delete checkedItems[id];
+            } else {
+                checkedItems[id] = true;
+                // Success feedback
+                vibrateHeavy();
+                triggerBlast(event.clientX, event.clientY);
+            }
+            
+            localStorage.setItem('neet_tracker_checked', JSON.stringify(checkedItems));
+            render();
+        }
+
+        // Init
+        render();
+
+    </script>
+</body>
+</html>
